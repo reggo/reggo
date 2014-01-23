@@ -15,7 +15,7 @@ import (
 	"github.com/reggo/train"
 )
 
-type PrederTrainable interface {
+type TrainablePreder interface {
 	train.Trainable
 	Predictor
 }
