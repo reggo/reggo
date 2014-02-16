@@ -1,9 +1,10 @@
-package activator
+package nnet
 
 import (
 	"encoding/gob"
-	"github.com/reggo/common"
 	"math"
+
+	"github.com/reggo/reggo/common"
 )
 
 // init registers the types so they can be GobEncoded and GobDecoded

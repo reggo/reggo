@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"github.com/gonum/floats"
-	"github.com/reggo/nnet/activator"
-	"github.com/reggo/regtest"
+
+	"github.com/reggo/reggo/regtest"
 )
 
 var testNets []*Trainer
@@ -21,7 +21,7 @@ type netIniter struct {
 	outputDim        int
 	//nSamples int
 	name                string
-	finalLayerActivator activator.Activator
+	finalLayerActivator Activator
 }
 
 var netIniters []*netIniter = []*netIniter{
@@ -31,28 +31,28 @@ var netIniters []*netIniter = []*netIniter{
 		inputDim:            12,
 		outputDim:           2,
 		name:                "No hidden layers",
-		finalLayerActivator: activator.Linear{},
+		finalLayerActivator: Linear{},
 	},
 	{
 		nHiddenLayers:       2,
 		nNeuronsPerLayer:    5,
 		inputDim:            10,
 		outputDim:           12,
-		finalLayerActivator: activator.Linear{},
+		finalLayerActivator: Linear{},
 	},
 	{
 		nHiddenLayers:       1,
 		nNeuronsPerLayer:    5,
 		inputDim:            10,
 		outputDim:           8,
-		finalLayerActivator: activator.Linear{},
+		finalLayerActivator: Linear{},
 	},
 	{
 		nHiddenLayers:       3,
 		nNeuronsPerLayer:    5,
 		inputDim:            4,
 		outputDim:           3,
-		finalLayerActivator: activator.Linear{},
+		finalLayerActivator: Linear{},
 	},
 }
 
@@ -145,12 +145,12 @@ func TestDeriv(t *testing.T) {
 }
 
 func TestJson(t *testing.T) {
-	net1, err := NewSimpleTrainer(9, 8, 5, 6, activator.Linear{})
+	net1, err := NewSimpleTrainer(9, 8, 5, 6, Linear{})
 	if err != nil {
 		t.Errorf("Error making net", err)
 	}
 	net1.RandomizeParameters()
-	net2, err := NewSimpleTrainer(2, 7, 1, 1, activator.Sigmoid{})
+	net2, err := NewSimpleTrainer(2, 7, 1, 1, Sigmoid{})
 	if err != nil {
 		t.Errorf("Error making net", err)
 	}

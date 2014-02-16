@@ -5,22 +5,21 @@ import (
 	"encoding/json"
 	"math"
 	"math/rand"
-	"github.com/reggo/common"
-	"github.com/reggo/nnet/activator"
+	"github.com/reggo/reggo/common"
 
 	"fmt"
 )
 
 func init() {
-	gob.Register(SumNeuron{Activator: activator.LinearTanh{}})
+	gob.Register(SumNeuron{Activator: LinearTanh{}})
 	common.Register(SumNeuron{})
 }
 
 var (
-	TanhNeuron       SumNeuron = SumNeuron{Activator: activator.Tanh{}}
-	LinearTanhNeuron SumNeuron = SumNeuron{Activator: activator.LinearTanh{}}
-	LinearNeuron     SumNeuron = SumNeuron{Activator: activator.Linear{}}
-	SigmoidNeuron    SumNeuron = SumNeuron{Activator: activator.Sigmoid{}}
+	TanhNeuron       SumNeuron = SumNeuron{Activator: Tanh{}}
+	LinearTanhNeuron SumNeuron = SumNeuron{Activator: LinearTanh{}}
+	LinearNeuron     SumNeuron = SumNeuron{Activator: Linear{}}
+	SigmoidNeuron    SumNeuron = SumNeuron{Activator: Sigmoid{}}
 )
 
 // Neuron doesn't provide own memory, just a definition. Net interfaces with parameters directly
@@ -41,7 +40,7 @@ type Neuron interface {
 
 // A sum neuron takes a weighted sum of all the inputs and pipes them through an activator function
 type SumNeuron struct {
-	activator.Activator
+	Activator
 }
 
 // Activate function comes from activator
@@ -104,6 +103,6 @@ func (s *SumNeuron) UnmarshalJSON(data []byte) error {
 	if err != nil {
 		return fmt.Errorf("nnet/neuron/unmarshaljson: error unmarshaling data: " + err.Error())
 	}
-	s.Activator = v.I.(activator.Activator)
+	s.Activator = v.I.(Activator)
 	return nil
 }

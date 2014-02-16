@@ -1,10 +1,10 @@
-package activator
+package nnet
 
 import (
 	"math"
 	"testing"
 
-	"github.com/reggo/common"
+	"github.com/reggo/reggo/common"
 )
 
 // TODO: Add better tests for JSON

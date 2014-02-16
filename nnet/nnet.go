@@ -7,10 +7,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/reggo/common"
-	"github.com/reggo/nnet/activator"
-	predHelp "github.com/reggo/predict"
-	"github.com/reggo/train"
+	"github.com/reggo/reggo/common"
+	predHelp "github.com/reggo/reggo/predict"
+	"github.com/reggo/reggo/train"
 )
 
 func init() {
@@ -254,7 +253,7 @@ type Trainer struct {
 // tanh neuron activators in the hidden layer. Common choices for the final layer activator
 // are activator.Linear for regression and activator.Tanh for classification.
 // nLayers is the number of hidden layers. For now, must be at least one.
-func NewSimpleTrainer(inputDim, outputDim, nHiddenLayers, nNeuronsPerLayer int, finalLayerActivator activator.Activator) (*Trainer, error) {
+func NewSimpleTrainer(inputDim, outputDim, nHiddenLayers, nNeuronsPerLayer int, finalLayerActivator Activator) (*Trainer, error) {
 	if inputDim <= 0 {
 		return nil, errors.New("non-positive input dimension")
 	}
