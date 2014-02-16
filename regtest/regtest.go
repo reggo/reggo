@@ -397,7 +397,7 @@ func TestLinearsolveAndDeriv(t *testing.T, linear train.LinearTrainable, inputs,
 	batch := train.NewBatchGradBased(linear, true, inputs, trueOutputs, nil, loss.SquaredDistance{}, regularize.None{})
 	problem := batch
 	settings := multivariate.DefaultSettings()
-	settings.GradAbsTol = 1e-13
+	settings.GradAbsTol = 1e-11
 	//settings. = 0
 
 	result, err := multivariate.OptimizeGrad(problem, parameters, settings, nil)

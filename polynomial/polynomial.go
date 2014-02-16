@@ -7,9 +7,9 @@ import (
 
 	"github.com/gonum/matrix/mat64"
 
-	"github.com/reggo/common"
-	predHelp "github.com/reggo/predict"
-	"github.com/reggo/train"
+	"github.com/reggo/reggo/common"
+	predHelp "github.com/reggo/reggo/predict"
+	"github.com/reggo/reggo/train"
 )
 
 const (

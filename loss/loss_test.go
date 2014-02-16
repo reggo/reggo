@@ -1,10 +1,11 @@
 package loss
 
 import (
-	"github.com/gonum/floats"
-	"github.com/reggo/common"
 	"math"
 	"testing"
+
+	"github.com/gonum/floats"
+	"github.com/reggo/reggo/common"
 )
 
 const (

@@ -6,7 +6,7 @@ import (
 	"encoding/gob"
 	"math"
 
-	"github.com/reggo/common"
+	"github.com/reggo/reggo/common"
 )
 
 func init() {

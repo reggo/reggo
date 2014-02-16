@@ -7,7 +7,7 @@ import (
 	"math"
 	"sync"
 
-	"github.com/reggo/common"
+	"github.com/reggo/reggo/common"
 
 	"github.com/gonum/matrix/mat64"
 )

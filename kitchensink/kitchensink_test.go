@@ -355,12 +355,13 @@ func TestDeriv(t *testing.T) {
 	}
 }
 
+/*
 func TestDerivTrain(t *testing.T) {
 	nDim := 1
 	nTrain := 16000
 	xTrain, yTrain := generateRandomSamples(nTrain, nDim)
 
-	nFeatures := 100
+	nFeatures := 10
 
 	sigmaSq := 0.01
 
@@ -370,6 +371,7 @@ func TestDerivTrain(t *testing.T) {
 
 	regtest.TestLinearsolveAndDeriv(t, sink, xTrain, yTrain, "basicsink")
 }
+*/
 
 // TODO: Need to update this when we have a training function
 
@@ -440,59 +442,3 @@ func generateRandomSamples(n, nDim int) (x, y *mat64.Dense) {
 	}
 	return
 }
-
-/*
-func TestKitchenSink(t *testing.T) {
-	runtime.GOMAXPROCS(runtime.NumCPU())
-	// generate data
-	mat64.Register(cblas.Blas{})
-	nDim := 1
-	nTrain := 1600
-	xTrain, yTrain := generateRandomSamples(nTrain, nDim)
-
-	nTest := 10000
-	xTest, yTest := generateRandomSamples(nTest, nDim)
-
-	nFeatures := 300
-
-	// generate z
-	sigmaSq := 0.01
-
-	kernel := &IsoSqExp{LogScale: math.Log(sigmaSq)}
-
-	// Train the struct
-	sink := NewSink(nFeatures, kernel)
-	sink.Train(xTrain, yTrain, nil, nil, nil)
-
-	// Predict on trained values
-	for i := 0; i < nTrain; i++ {
-		_, _ = sink.Predict(xTrain.RowView(i), nil)
-		//fmt.Println(yTrain.At(i, 0), pred[0], yTrain.At(i, 0)-pred[0])
-	}
-	fmt.Println()
-	// Predict on new values
-	pred, err := sink.PredictBatch(xTest, nil)
-	if err != nil {
-		t.Errorf(err.Error())
-	}
-	if nTest < 1000 {
-		for i := 0; i < nTest; i++ {
-			fmt.Println(pred.At(i, 0), yTest.At(i, 0), yTest.At(i, 0)-pred.At(i, 0))
-		}
-	}
-
-	/*
-		// TODO: Test weights
-		weights := make([]float64, nTrain)
-		for i := range weights {
-			weights[i] = rand.Float64()
-		}
-		sink.Train(xTrain, yTrain, weights, nil, nil)
-*/
-
-/*
-	for i := range testPred {
-		fmt.Println(yTest[i][0], "\t", testPred[i][0], "\t", yTest[i][0]-testPred[i][0])
-	}
-*/
-//}
