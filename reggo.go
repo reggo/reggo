@@ -5,20 +5,15 @@ package reggo
 
 import (
 	"github.com/gonum/matrix/mat64"
-
-	//"github.com/reggo/scale"
-	//"github.com/reggo/loss"
-	//"github.com/reggo/regularize"
-
-	//"github.com/reggo/predict"
 	"github.com/reggo/common"
-	"github.com/reggo/train"
 )
 
+/*
 type TrainablePreder interface {
 	train.Trainable
 	Predictor
 }
+*/
 
 type RowMatrix interface {
 	mat64.Matrix
@@ -62,6 +57,8 @@ type SlicePredictor interface {
 	PredictSlice(input, output [][]float64) error
 }
 
+*/
+
 /*
 // Trainable is a type that can be trained on a weighted set of inputs
 // Probably needs to be some form of setting here
@@ -69,6 +66,7 @@ type Trainable interface {
 	Train(inputs, outputs mat64.Matrix, weights []float64, losser loss.Losser, regularizer regularize.Regularizer) error
 }
 
+/*
 // HyperTrainable is a type which also has hyperparameters that can be trained
 type HyperTrainable interface {
 	TrainHyper(inputs, outputs mat64.Matrix, weights []float64) error
