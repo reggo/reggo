@@ -6,9 +6,9 @@ import (
 	"math"
 	"math/rand"
 
-	"github.com/reggo/common"
-	predHelp "github.com/reggo/predict"
-	"github.com/reggo/train"
+	"github.com/reggo/reggo/common"
+	predHelp "github.com/reggo/reggo/predict"
+	"github.com/reggo/reggo/train"
 
 	"github.com/gonum/floats"
 	"github.com/gonum/matrix/mat64"

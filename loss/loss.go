@@ -4,7 +4,7 @@ import (
 	"encoding/gob"
 	"math"
 
-	"github.com/reggo/common"
+	"github.com/reggo/reggo/common"
 )
 
 // init registers all of the types into the common registry for

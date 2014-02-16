@@ -6,9 +6,9 @@ import (
 	"github.com/gonum/floats"
 	"github.com/gonum/matrix/mat64"
 
-	"github.com/reggo/common"
-	"github.com/reggo/loss"
-	"github.com/reggo/regularize"
+	"github.com/reggo/reggo/common"
+	"github.com/reggo/reggo/loss"
+	"github.com/reggo/reggo/regularize"
 
 	"fmt"
 )

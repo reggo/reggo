@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/reggo/common"
-	"github.com/reggo/loss"
-	"github.com/reggo/regularize"
-	"github.com/reggo/train/diagonal"
+	"github.com/reggo/reggo/common"
+	"github.com/reggo/reggo/loss"
+	"github.com/reggo/reggo/regularize"
+	"github.com/reggo/reggo/train/diagonal"
 
 	"github.com/gonum/matrix/mat64"
 )

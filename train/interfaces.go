@@ -1,6 +1,6 @@
 package train
 
-import "github.com/reggo/common"
+import "github.com/reggo/reggo/common"
 
 // TODO: Still would be nice to have a train.Train method which does the smart stuff
 

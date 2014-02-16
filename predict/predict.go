@@ -7,7 +7,7 @@ import (
 
 	"github.com/gonum/matrix/mat64"
 
-	"github.com/reggo/common"
+	"github.com/reggo/reggo/common"
 )
 
 type BatchPredictor interface {

@@ -10,9 +10,9 @@ import (
 	"github.com/gonum/matrix/mat64"
 
 	"github.com/gonum/floats"
-	"github.com/reggo/regtest"
-	"github.com/reggo/regularize"
-	"github.com/reggo/train"
+	"github.com/reggo/reggo/regtest"
+	"github.com/reggo/reggo/regularize"
+	"github.com/reggo/reggo/train"
 )
 
 var (
