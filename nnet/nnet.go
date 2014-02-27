@@ -227,6 +227,8 @@ func predict(input []float64, neurons [][]Neuron, parameters [][][]float64, prev
 	// first layer uses the real input as the input
 	tmpOutput = tmpOutput[:len(neurons[0])]
 	processLayer(input, neurons[0], parameters[0], tmpOutput)
+
+	// Middle layers use the previous output as input
 	for i := 1; i < nLayers-1; i++ {
 		// swap the pointers for temporary outputs, and make the new output the correct size
 		prevTmpOutput, tmpOutput = tmpOutput, prevTmpOutput

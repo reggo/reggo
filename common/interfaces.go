@@ -21,4 +21,6 @@ type MutableRowMatrix interface {
 type Predictor interface {
 	Predict(input, output []float64) ([]float64, error)
 	PredictBatch(inputs RowMatrix, outputs MutableRowMatrix) (MutableRowMatrix, error)
+	InputDim() int
+	OutputDim() int
 }
