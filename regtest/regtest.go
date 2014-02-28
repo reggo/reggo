@@ -20,8 +20,6 @@ import (
 	"github.com/reggo/reggo/loss"
 	"github.com/reggo/reggo/regularize"
 	"github.com/reggo/reggo/train"
-
-	"fmt"
 )
 
 func init() {
@@ -29,8 +27,6 @@ func init() {
 	//rand.Seed(time.Now().UnixNano())
 	runtime.GOMAXPROCS(runtime.NumCPU())
 }
-
-var _ = fmt.Println
 
 const (
 	throwPanic = true
@@ -422,27 +418,35 @@ func TestLinearsolveAndDeriv(t *testing.T, linear train.LinearTrainable, inputs,
 	result2, err := multivariate.OptimizeGrad(problem2, init2, settings, nil)
 	parametersDeriv2 := result2.Loc
 
-	fmt.Println("starting deriv2 loss")
+	//fmt.Println("starting deriv2 loss")
 	deriv2 := make([]float64, linear.NumParameters())
 	loss2 := batch2.ObjGrad(parametersDeriv2, deriv2)
 
-	fmt.Println("starting derivlin loss")
+	//fmt.Println("starting derivlin loss")
 	derivlinear := make([]float64, linear.NumParameters())
 	lossLin := batch2.ObjGrad(parametersLinearSolve, derivlinear)
 
-	fmt.Println("param deriv 1 =", parametersDeriv)
-	fmt.Println("param deriv2  =", parametersDeriv2)
-	fmt.Println("linear params =", parametersLinearSolve)
+	_ = loss1
+	_ = loss2
+	_ = lossLin
 
-	fmt.Println("deriv1 loss =", loss1)
-	fmt.Println("deriv2 loss =", loss2)
-	fmt.Println("lin loss    =", lossLin)
+	/*
 
-	fmt.Println("deriv    =", deriv)
-	fmt.Println("deriv2   =", deriv2)
-	fmt.Println("linderiv =", derivlinear)
+		fmt.Println("param deriv 1 =", parametersDeriv)
+		fmt.Println("param deriv2  =", parametersDeriv2)
+		fmt.Println("linear params =", parametersLinearSolve)
 
-	//fmt.Println("Pred out deriv", predOutDeriv)
+		fmt.Println("deriv1 loss =", loss1)
+		fmt.Println("deriv2 loss =", loss2)
+		fmt.Println("lin loss    =", lossLin)
+
+		fmt.Println("deriv    =", deriv)
+		fmt.Println("deriv2   =", deriv2)
+		fmt.Println("linderiv =", derivlinear)
+
+		//fmt.Println("Pred out deriv", predOutDeriv)
+
+	*/
 
 	/*
 		for i := 0; i < rows; i++ {
@@ -469,7 +473,6 @@ func TestJSON(t *testing.T, jsoner1 Jsoner, jsoner2 Jsoner) {
 	if err != nil {
 		t.Errorf("Error marshaling: ", err)
 	}
-	fmt.Println(string(b))
 	err = jsoner2.UnmarshalJSON(b)
 	if err != nil {
 		t.Errorf("Error unmarshaling", err)
