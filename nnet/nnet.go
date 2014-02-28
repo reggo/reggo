@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math"
 
 	"github.com/reggo/reggo/common"
 	predHelp "github.com/reggo/reggo/predict"
@@ -22,9 +23,12 @@ type Net struct {
 	outputDim          int
 	totalNumParameters int
 
+	grainSize int
+
 	neurons    [][]Neuron
 	parameters [][][]float64
 }
+
 type netMarshaler struct {
 	InputDim           int
 	OutputDim          int
@@ -131,7 +135,12 @@ func (n *Net) UnmarshalJSON(data []byte) error {
 	if err != nil {
 		return err
 	}
-	return n.unmarshal(marshal)
+	err = n.unmarshal(marshal)
+	if err != nil {
+		return err
+	}
+	n.setGrainSize()
+	return nil
 }
 
 // InputDim returns the number of inputs expected by the net
@@ -165,11 +174,44 @@ func (n *Net) PredictBatch(inputs common.RowMatrix, outputs common.MutableRowMat
 		neurons:    n.neurons,
 		parameters: n.parameters,
 	}
-	return predHelp.BatchPredict(batch, inputs, outputs, n.inputDim, n.outputDim, n.grainSize())
+	return predHelp.BatchPredict(batch, inputs, outputs, n.inputDim, n.outputDim, n.grainSize)
 }
 
-func (n *Net) grainSize() int {
-	return 500
+func (n *Net) setGrainSize() {
+	// The number of floating point operations is roughly equal to the number of
+	// parameters, plus there is some overhead per neuron per function call and
+	// some overhead per layer in function calls
+
+	// Numbers determined unscientifically by using benchmark results. Definitely
+	// dependent on many things, but these are probably good enough
+	neuronOverhead := 70 // WAG, relative to one parameter
+	layerOverhead := 200 // relative to one parameter
+
+	var nNeurons int
+	for _, layer := range n.neurons {
+		nNeurons += len(layer)
+	}
+
+	nOps := n.totalNumParameters + nNeurons*neuronOverhead + layerOverhead*len(n.neurons)
+
+	// We want each batch to take around 100µs
+	// https://groups.google.com/forum/#!searchin/golang-nuts/Data$20parallelism$20with$20go$20routines/golang-nuts/-9LdBZoAIrk/2ayBvi0U0mQJ
+
+	// Something like "nanoseconds per effective parameter"
+	// Determined non-scientifically from benchmarks. This is definitely architecture
+	// dependent, but maybe not relative to the overhead of the parallel loop
+	c := 0.7
+
+	grainSize := int(math.Ceil(100000 / (c * float64(nOps))))
+	if grainSize < 1 {
+		grainSize = 1 // This shouldn't happen, but maybe for a REALLY large net. Better safe than sorry
+	}
+
+	n.grainSize = grainSize
+}
+
+func (n *Net) GrainSize() int {
+	return n.grainSize
 }
 
 // batchPredictor is a type which implements predHelp.BatchPredictor so that
@@ -321,15 +363,14 @@ func NewTrainer(inputDim, outputDim int, neurons [][]Neuron) (*Trainer, error) {
 		neurons:            neurons,
 		parameters:         parameters,
 	}
+	net.setGrainSize()
 	return &Trainer{net}, nil
 }
 
+// TODO: Replace this with a copy so can modify the trainer after releasing the
+// predictor
 func (s *Trainer) Predictor() common.Predictor {
 	return s.Net
-}
-
-func (s *Trainer) GrainSize() int {
-	return 500
 }
 
 // NumFeatures returns the input dimension because a feed-forward neural network
