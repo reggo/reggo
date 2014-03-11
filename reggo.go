@@ -8,6 +8,16 @@ import (
 	"github.com/reggo/reggo/common"
 )
 
+// TODO: Need to move all of the (public) interfaces here. This is the only logical place
+// Common (but not public) things should be in common. Can make a comment about trainers
+// in Train
+// If we want to have somewhere that can do model selection and stuff, that can be in
+// selection (or some other sub-package).
+// Reggo is based on these interfaces
+// 		learning algorithms can be found in algorithms/Xxx
+//		Training algorithms can be found in train/Xxx
+// Separation between algorithms and learning
+
 /*
 type TrainablePreder interface {
 	train.Trainable
