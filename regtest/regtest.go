@@ -10,9 +10,8 @@ import (
 	"testing"
 
 	"github.com/btracey/opt/multivariate"
-
-	"github.com/gonum/blas/cblas"
 	"github.com/gonum/blas/dbw"
+	"github.com/gonum/blas/goblas"
 	"github.com/gonum/floats"
 	"github.com/gonum/matrix/mat64"
 
@@ -23,7 +22,7 @@ import (
 )
 
 func init() {
-	dbw.Register(cblas.Blas{})
+	dbw.Register(goblas.Blas{})
 	//rand.Seed(time.Now().UnixNano())
 	runtime.GOMAXPROCS(runtime.NumCPU())
 }
