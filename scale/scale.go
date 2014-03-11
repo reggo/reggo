@@ -12,6 +12,11 @@ import (
 	"github.com/gonum/matrix/mat64"
 )
 
+// TODO: Should have a Scaler and a SettableScaler where SetScale returns a Scaler.
+// FixedNormal (etc.). This should be fine, because most peolpe won't have to
+// interface with those types.
+// scale.Settable
+
 func init() {
 	gob.Register(None{})
 	gob.Register(Linear{})
