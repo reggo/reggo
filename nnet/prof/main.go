@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"os"
+	"path/filepath"
 
 	"github.com/davecheney/profile"
 
@@ -16,6 +18,11 @@ import (
 
 func main() {
 
+	gopath := os.Getenv("GOPATH")
+	if gopath == "" {
+		panic("no gopath")
+	}
+
 	nInputs := 10
 	nOutputs := 3
 	nLayers := 2
@@ -23,7 +30,12 @@ func main() {
 	nSamples := 100000
 	nRuns := 50
 
-	defer profile.Start(profile.CPUProfile).Stop()
+	config := &profile.Config{
+		CPUProfile:  true,
+		ProfilePath: filepath.Join(gopath, "prof", "nnet"),
+	}
+
+	defer profile.Start(config).Stop()
 
 	net, err := nnet.NewSimpleTrainer(nInputs, nOutputs, nLayers, nNeurons, nnet.Linear{})
 	if err != nil {
