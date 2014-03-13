@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"os"
+	"path/filepath"
+	"runtime"
 
 	"github.com/davecheney/profile"
 
@@ -16,6 +19,11 @@ import (
 
 func main() {
 
+	runtime.GOMAXPROCS(runtime.NumCPU())
+
+	gopath := os.Getenv("GOPATH")
+	path := filepath.Join(gopath, "prof", "github.com", "reggo", "reggo", "nnet")
+
 	nInputs := 10
 	nOutputs := 3
 	nLayers := 2
@@ -24,7 +32,8 @@ func main() {
 	nRuns := 50
 
 	config := &profile.Config{
-		CPUProfile: true,
+		CPUProfile:  true,
+		ProfilePath: path,
 	}
 
 	defer profile.Start(config).Stop()
