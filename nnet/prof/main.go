@@ -19,7 +19,7 @@ import (
 
 func main() {
 
-	runtime.GOMAXPROCS(runtime.NumCPU())
+	runtime.GOMAXPROCS(runtime.NumCPU() - 2)
 
 	gopath := os.Getenv("GOPATH")
 	path := filepath.Join(gopath, "prof", "github.com", "reggo", "reggo", "nnet")
@@ -28,7 +28,7 @@ func main() {
 	nOutputs := 3
 	nLayers := 2
 	nNeurons := 50
-	nSamples := 100000
+	nSamples := 1000000
 	nRuns := 50
 
 	config := &profile.Config{

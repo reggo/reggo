@@ -266,6 +266,7 @@ func predict(input []float64, neurons [][]Neuron, parameters [][][]float64, prev
 		processLayer(input, neurons[0], parameters[0], output)
 		return
 	}
+
 	// first layer uses the real input as the input
 	tmpOutput = tmpOutput[:len(neurons[0])]
 	processLayer(input, neurons[0], parameters[0], tmpOutput)
