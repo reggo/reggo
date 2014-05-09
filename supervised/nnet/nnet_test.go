@@ -7,7 +7,7 @@ import (
 
 	"github.com/gonum/floats"
 
-	"github.com/reggo/reggo/regtest"
+	"github.com/reggo/reggo/common/regtest"
 )
 
 var testNets []*Trainer
