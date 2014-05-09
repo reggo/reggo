@@ -9,7 +9,7 @@ import (
 	"math"
 
 	"github.com/reggo/reggo/common"
-	predHelp "github.com/reggo/reggo/predict"
+	predHelp "github.com/reggo/reggo/common/predict"
 	"github.com/reggo/reggo/train"
 )
 
