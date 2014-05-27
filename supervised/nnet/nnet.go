@@ -173,6 +173,8 @@ func (n *Net) PredictBatch(inputs common.RowMatrix, outputs common.MutableRowMat
 	batch := batchPredictor{
 		neurons:    n.neurons,
 		parameters: n.parameters,
+		inputDim:   n.InputDim(),
+		outputDim:  n.OutputDim(),
 	}
 	return predHelp.BatchPredict(batch, inputs, outputs, n.inputDim, n.outputDim, n.grainSize)
 }
@@ -219,6 +221,8 @@ func (n *Net) GrainSize() int {
 type batchPredictor struct {
 	neurons    [][]Neuron
 	parameters [][][]float64
+	inputDim   int
+	outputDim  int
 }
 
 // NewPredictor generates the necessary temporary memory and returns a struct to allow
@@ -230,6 +234,8 @@ func (b batchPredictor) NewPredictor() predHelp.Predictor {
 		parameters:    b.parameters,
 		tmpOutput:     tmpOutput,
 		prevTmpOutput: prevOutput,
+		inputDim:      b.inputDim,
+		outputDim:     b.outputDim,
 	}
 }
 
@@ -240,10 +246,21 @@ type predictor struct {
 	parameters    [][][]float64
 	tmpOutput     []float64
 	prevTmpOutput []float64
+
+	inputDim  int
+	outputDim int
 }
 
 func (p predictor) Predict(input, output []float64) {
 	predict(input, p.neurons, p.parameters, p.prevTmpOutput, p.tmpOutput, output)
+}
+
+func (p predictor) InputDim() int {
+	return p.inputDim
+}
+
+func (p predictor) OutputDim() int {
+	return p.outputDim
 }
 
 func newPredictMemory(neurons [][]Neuron) (prevOutput, output []float64) {
@@ -446,8 +463,9 @@ func setparameters(params [][][]float64, p []float64, nParameters int) {
 	}
 }
 
-// featurize can be called in parallel, so just returns self
+//
 func (s *Trainer) NewFeaturizer() train.Featurizer {
+	// featurize can be called in parallel, so just returns self
 	return s
 }
 
@@ -535,7 +553,11 @@ func cacheProcessLayer(input []float64, neurons []Neuron, parameters [][]float64
 	}
 }
 
-// Derivative computes the derivatives of the loss function with respect to the parameters.
+// TODO: Do I need to do it this way? Can't I just do dProdectionDParameter and then
+// the outer code does the multiplication? That seems a lot less confusing. I guess
+// that doesn't exploit sparsity at all (dPredDWeight is a matrix)
+
+// Deriv computes the derivatives of the loss function with respect to the parameters.
 // input, layers, parameters, dLossDPred, combinations, and outputs are all true inputs to the method.
 // dLossDParam is the output of the method
 // dLossDOutput and dLossDInput are storage for temporary variables

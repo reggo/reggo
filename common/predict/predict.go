@@ -16,6 +16,8 @@ type BatchPredictor interface {
 
 type Predictor interface {
 	Predict(input, output []float64)
+	InputDim() int
+	OutputDim() int
 }
 
 // TODO: Replace these errors with a better location for error checking
