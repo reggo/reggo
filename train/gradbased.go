@@ -215,5 +215,6 @@ func (g *BatchGradBased) ObjGrad(parameters []float64, derivative []float64) (lo
 	// Normalize by the number of training samples
 	loss /= float64(g.nTrain)
 	floats.Scale(1/float64(g.nTrain), derivative)
+
 	return loss
 }
