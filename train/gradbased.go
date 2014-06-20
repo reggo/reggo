@@ -37,6 +37,11 @@ type BatchGradBased struct {
 	lossDerivFunc func(start, end int, c chan lossDerivStruct, parameters []float64)
 }
 
+type lossDerivStruct struct {
+	loss  float64
+	deriv []float64
+}
+
 // NewBatchGradBased creates a new batch grad based with the given inputs
 func NewBatchGradBased(trainable Trainable, cacheFeatures bool, inputs, outputs common.RowMatrix, weights []float64, losser loss.DerivLosser, regularizer regularize.Regularizer) *BatchGradBased {
 	var features *mat64.Dense

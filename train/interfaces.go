@@ -35,11 +35,6 @@ type Trainable interface {
 	Predictor() common.Predictor // Returns the memory-safe predictor
 }
 
-type lossDerivStruct struct {
-	loss  float64
-	deriv []float64
-}
-
 type LossDeriver interface {
 	// Gets the current parameters
 	//Parameters() []float64
@@ -55,4 +50,14 @@ type LossDeriver interface {
 	// to the weight given the predicted output and the derivative
 	// of the loss function with respect to the prediction
 	Deriv(parameters, featurizedInput, predOutput, dLossDPred, dLossDWeight []float64)
+}
+
+type BatchPredictor interface {
+	NewPredictor() Predictor // Returns a predictor. This exists so that methods can create temporary data if necessary
+}
+
+type Predictor interface {
+	Predict(input, output []float64)
+	InputDim() int
+	OutputDim() int
 }
