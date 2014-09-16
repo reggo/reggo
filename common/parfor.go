@@ -46,7 +46,7 @@ func GetGrainSize(nSamples, minGrainSize, maxGrainSize int) int {
 
 //TODO: May need to rethink grainsize thing
 
-// ParallelFor computes the function f in parallel
+// ParallelFor computes the function f in parallel using chucks of the given size
 func ParallelFor(n, grain int, f func(start, end int)) {
 	P := runtime.GOMAXPROCS(0)
 	idx := uint64(0)
