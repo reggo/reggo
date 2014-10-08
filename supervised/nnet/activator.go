@@ -65,7 +65,12 @@ func (Linear) Activate(sum float64) float64 {
 // DActivateDSum computes the derivative of the linear activation function
 // with respect to the weighted sum
 func (Linear) DActivateDCombination(sum, output float64) float64 {
-	return 1.0
+	return 1
+}
+
+// ouptputs the second derivative of activate given the combination
+func (Linear) D2ActivateD2Combination(sum, output float64) float64 {
+	return 0
 }
 
 func (Linear) String() string {
@@ -75,6 +80,7 @@ func (Linear) String() string {
 const (
 	// http://www.wolframalpha.com/input/?i=1.7159+*+2%2F3
 	tanhDerivConst = 1.14393333333333333333333333333333333333333333333333333333333333333333
+	tanhHessConst  = -1.5252444444444444444444444444444444444444444
 	twoThirds      = 0.66666666666666666666666666666666666666666666666666666666666666666666
 )
 
@@ -88,13 +94,22 @@ type Tanh struct{}
 
 // Activate computes the Tanh activation function
 func (Tanh) Activate(sum float64) float64 {
-	return 1.7159 * math.Tanh(2.0/3.0*sum)
+	return 1.7159 * math.Tanh(twoThirds*sum)
 }
 
 // DActivateDSum computes the derivative of the Tanh activation function
 // with respect to the weighted sum
 func (Tanh) DActivateDCombination(sum, output float64) float64 {
 	return tanhDerivConst * (1.0 - math.Tanh(twoThirds*sum)*math.Tanh(twoThirds*sum))
+}
+
+func (Tanh) D2ActivateDCombination(sum, output float64) float64 {
+	// http://www.wolframalpha.com/input/?i=1.14393+Sech[%282+x%29%2F3]^2
+	// -1.52524 tanh(2/3 * x) * sech2(2/3 * x)
+	// tanh^2 = 1 - sech^2
+	tanh := math.Tanh(twoThirds * sum)
+	sec2 := 1 - tanh*tanh
+	return tanhHessConst * tanh * sec2
 }
 
 func (Tanh) String() string {
@@ -106,8 +121,7 @@ func (Tanh) String() string {
 // LinearTahn is the Tanh activation function plus a small linear term (set to 0.01).
 // This linear term helps stabilize the weights so that they do not tend to infinity.
 // See: // See: http://leon.bottou.org/slides/tricks/tricks.pdf for more description
-type LinearTanh struct {
-}
+type LinearTanh struct{}
 
 // Activate computes the LinearTanh activation function
 func (LinearTanh) Activate(sum float64) float64 {
@@ -118,6 +132,13 @@ func (LinearTanh) Activate(sum float64) float64 {
 // with respect to the weighted sum
 func (LinearTanh) DActivateDCombination(sum, output float64) float64 {
 	return tanhDerivConst*(1.0-math.Tanh(twoThirds*sum)*math.Tanh(twoThirds*sum)) + 0.01
+}
+
+func (LinearTanh) D2ActivateD2Combination(sum, output float64) float64 {
+	// see tanh. Linear term has no curvature
+	tanh := math.Tanh(twoThirds * sum)
+	sec2 := 1 - tanh*tanh
+	return tanhHessConst * tanh * sec2
 }
 
 func (LinearTanh) String() string {

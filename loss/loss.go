@@ -4,6 +4,7 @@ import (
 	"encoding/gob"
 	"math"
 
+	"github.com/gonum/matrix/mat64"
 	"github.com/reggo/reggo/common"
 )
 
@@ -51,7 +52,10 @@ type ConvexDerivLosser interface {
 	Convex()
 }
 
-// SquaredDistance is the same as the two-norm of (pred - truth) divided by the length
+// TODO: This should be divided by the square root of the length
+
+// SquaredDistance is the same as the two-norm of (pred - truth) divided by the
+// length
 type SquaredDistance struct{}
 
 func (SquaredDistance) Loss(prediction, truth []float64) (loss float64) {
@@ -79,6 +83,47 @@ func (SquaredDistance) LossDeriv(prediction, truth, derivative []float64) (loss 
 	for i := range derivative {
 		derivative[i] /= float64(len(prediction)) / 2
 	}
+	return loss
+}
+
+// TODO: Make this a mutable symmetric
+
+func (SquaredDistance) LossDerivHess(prediction, truth, derivative []float64, hessian *mat64.Dense) (loss float64) {
+	if len(prediction) != len(truth) || len(prediction) != len(derivative) {
+		panic(lenMismatch)
+	}
+	n, m := hessian.Dims()
+	if len(prediction) != n {
+		panic(lenMismatch)
+	}
+	if len(prediction) != m {
+		panic(lenMismatch)
+	}
+	for i := range prediction {
+		diff := prediction[i] - truth[i]
+		derivative[i] = diff
+		loss += diff * diff
+	}
+
+	nFloat := float64(n)
+	loss /= nFloat
+
+	corr := 2 / nFloat
+
+	for i := range derivative {
+		derivative[i] *= corr
+	}
+
+	for i := 0; i < n; i++ {
+		for j := 0; j < n; j++ {
+			if i == j {
+				hessian.Set(i, j, corr)
+			} else {
+				hessian.Set(i, j, 0)
+			}
+		}
+	}
+
 	return loss
 }
 

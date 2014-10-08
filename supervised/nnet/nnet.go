@@ -315,7 +315,7 @@ type Trainer struct {
 // tanh neuron activators in the hidden layer. Common choices for the final layer activator
 // are activator.Linear for regression and activator.Tanh for classification.
 // nLayers is the number of hidden layers. For now, must be at least one.
-func NewSimpleTrainer(inputDim, outputDim, nHiddenLayers, nNeuronsPerLayer int, finalLayerActivator Activator) (*Trainer, error) {
+func NewSimpleTrainer(inputDim, outputDim, nHiddenLayers, nNeuronsPerLayer int, hiddenLayerActivator, finalLayerActivator Activator) (*Trainer, error) {
 	if inputDim <= 0 {
 		return nil, errors.New("non-positive input dimension")
 	}
@@ -338,7 +338,7 @@ func NewSimpleTrainer(inputDim, outputDim, nHiddenLayers, nNeuronsPerLayer int, 
 	for i := 0; i < nHiddenLayers; i++ {
 		neurons[i] = make([]Neuron, nNeuronsPerLayer)
 		for j := 0; j < nNeuronsPerLayer; j++ {
-			neurons[i][j] = TanhNeuron
+			neurons[i][j] = SumNeuron{Activator: hiddenLayerActivator}
 		}
 	}
 	neurons[nHiddenLayers] = make([]Neuron, outputDim)
@@ -471,8 +471,9 @@ func (s *Trainer) NewFeaturizer() train.Featurizer {
 
 func (s *Trainer) NewLossDeriver() train.LossDeriver {
 	return lossDerivWrapper{
-		neurons:      s.neurons,
-		parameters:   copyParameters(s.parameters),
+		neurons: s.neurons,
+		//parameters:   copyParameters(s.parameters),
+		parameters:   newPerParameterMemory(s.parameters),
 		outputs:      newPerNeuronMemory(s.neurons),
 		combinations: newPerNeuronMemory(s.neurons),
 		nParameters:  s.NumParameters(),
@@ -529,7 +530,7 @@ func (l lossDerivWrapper) Predict(parameters, input, predOutput []float64) {
 	cachePredict(input, l.neurons, l.parameters, l.combinations, l.outputs, predOutput)
 }
 
-// cachePredict predicts the output while caching the
+// cachePredict predicts the output while caching the result
 func cachePredict(input []float64, neurons [][]Neuron, parameters [][][]float64, combinations, outputs [][]float64, predOutput []float64) {
 	nLayers := len(neurons)
 

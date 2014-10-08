@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"math"
 	"math/rand"
+
 	"github.com/reggo/reggo/common"
 
 	"fmt"
@@ -86,6 +87,12 @@ func (s SumNeuron) DCombineDInput(params []float64, inputs []float64, combinatio
 	}
 	// This intentionally doesn't loop over all of the parameters, as the last parameter is the bias term
 }
+
+/*
+func (s SumNeuron) D2CombineD2Input(params, inputs []float64, combination float64, deriv []float64, hessian *mat64.Dense) {
+	for
+}
+*/
 
 type activatorMarshaler struct {
 	Activator common.InterfaceMarshaler
