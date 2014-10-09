@@ -472,7 +472,7 @@ func (s *Trainer) NewFeaturizer() train.Featurizer {
 func (s *Trainer) NewLossDeriver() train.LossDeriver {
 	return lossDerivWrapper{
 		neurons: s.neurons,
-		//parameters:   copyParameters(s.parameters),
+		//parameters: copyParameters(s.parameters),
 		parameters:   newPerParameterMemory(s.parameters),
 		outputs:      newPerNeuronMemory(s.neurons),
 		combinations: newPerNeuronMemory(s.neurons),

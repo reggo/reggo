@@ -2,7 +2,6 @@ package train
 
 import (
 	"errors"
-	"fmt"
 	"sync"
 
 	"github.com/gonum/floats"
@@ -87,10 +86,10 @@ func (g *GradOptimizable) Init() error {
 
 	g.features = FeaturizeTrainable(g.Trainable, g.Inputs, nil)
 
-	work := make(chan batchSend)
-	done := make(chan batchSend)
-	regularizeChan := make(chan batchSend)
-	regDone := make(chan batchSend)
+	work := make(chan batchSend, g.NumWorkers)
+	done := make(chan batchSend, g.NumWorkers)
+	regularizeChan := make(chan batchSend, 1)
+	regDone := make(chan batchSend, 1)
 	quit := make(chan struct{})
 
 	g.sendWork = work
@@ -209,7 +208,6 @@ func (g *GradOptimizable) FDf(params []float64, deriv []float64) float64 {
 		g.sendWork <- batch
 		lastSent += add
 	}
-	fmt.Println("init batches = ", initBatches)
 
 	// All inds sent, so just weight for all the collection
 	for i := 0; i < initBatches; i++ {
