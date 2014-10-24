@@ -417,6 +417,32 @@ func (s *Trainer) RandomizeParameters() {
 	}
 }
 
+// Returns the indices in the main slice for all of the parameters of the
+// neuron specified
+func (s *Trainer) ParameterIdx(layerIdx, neuronIdx int) []int {
+	if layerIdx < 0 || layerIdx >= len(s.parameters) {
+		panic("bad layer index")
+	}
+	if neuronIdx < 0 || neuronIdx >= len(s.parameters[layerIdx]) {
+		panic("bad neuron index")
+	}
+	idx := 0
+	for i, layer := range s.parameters {
+		for j, neuron := range layer {
+			if i == layerIdx && j == neuronIdx {
+				idxs := make([]int, len(neuron))
+				for k := range neuron {
+					idxs[k] = idx
+					idx++
+				}
+				return idxs
+			}
+			idx += len(neuron)
+		}
+	}
+	panic("bad layer or neuron idx")
+}
+
 // Parameters returns a copy of all the parameters as a flattened slice.
 // Creates a new slice if nil. Panics if non-nil and incorrect length.
 func (s *Trainer) Parameters(p []float64) []float64 {

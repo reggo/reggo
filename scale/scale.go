@@ -9,6 +9,7 @@ import (
 
 	"github.com/reggo/reggo/common"
 
+	"github.com/gonum/floats"
 	"github.com/gonum/matrix/mat64"
 )
 
@@ -60,6 +61,13 @@ type Scaler interface {
 	IsScaled() bool                   // Returns true if the scale for this type has already been set
 	Dimensions() int                  //Number of dimensions for wihich the data was scaled
 	SetScale(data *mat64.Dense) error // Uses the input data to set the scale
+}
+
+type LinearScaler interface {
+	Scaler
+	// Linear marks that the variable transformation was linear and returns
+	// the amount shifted and scaled ((original[i] - shift[i]) / scale[i]) = new )
+	Linear() (shift, scale []float64)
 }
 
 type SliceError struct {
@@ -198,6 +206,13 @@ func (n *None) SetScale(data *mat64.Dense) error {
 	return nil
 }
 
+func (n None) Linear() (shift, scale []float64) {
+	shift = make([]float64, n.Dim)
+	scale = make([]float64, n.Dim)
+	floats.AddConst(1, scale)
+	return shift, scale
+}
+
 // Linear is a type for scaling the data to be between 0 and 1
 type Linear struct {
 	Min    []float64 // Maximum value of the data
@@ -276,6 +291,17 @@ func (l *Linear) SetScale(data *mat64.Dense) error {
 		return unifError
 	}
 	return nil
+}
+
+func (l Linear) Linear() (shift, scale []float64) {
+	shift = make([]float64, l.Dim)
+	scale = make([]float64, l.Dim)
+
+	copy(shift, l.Min)
+	for i := range scale {
+		scale[i] = l.Max[i] - l.Min[i]
+	}
+	return shift, scale
 }
 
 // Scales the point returning an error if the length doesn't match
@@ -395,6 +421,15 @@ func (n *Normal) Unscale(point []float64) error {
 		point[i] = point[i]*n.Sigma[i] + n.Mu[i]
 	}
 	return nil
+}
+
+func (n Normal) Linear() (shift, scale []float64) {
+	shift = make([]float64, n.Dim)
+	scale = make([]float64, n.Dim)
+
+	copy(shift, n.Mu)
+	copy(scale, n.Sigma)
+	return shift, scale
 }
 
 /*

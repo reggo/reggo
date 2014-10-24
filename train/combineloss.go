@@ -164,6 +164,7 @@ func (g *GradOptimizable) F(params []float64) float64 {
 	return g.FDf(params, deriv)
 }
 
+// Not callable in parallel because of the batches
 func (g *GradOptimizable) FDf(params []float64, deriv []float64) float64 {
 	inds := g.Sampler.Iterate()
 	total := len(inds)

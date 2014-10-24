@@ -60,7 +60,10 @@ func (o OneNorm) Loss(parameters []float64) float64 {
 func (o OneNorm) LossDeriv(parameters, derivative []float64) float64 {
 	loss := o.Gamma * floats.Norm(parameters, 2)
 	for i, p := range parameters {
-		derivative[i] = o.Gamma * p
+		derivative[i] = o.Gamma
+		if p < 0 {
+			derivative[i] = -o.Gamma
+		}
 	}
 	return loss
 }
@@ -68,7 +71,11 @@ func (o OneNorm) LossDeriv(parameters, derivative []float64) float64 {
 func (o OneNorm) LossAddDeriv(parameters, derivative []float64) float64 {
 	loss := o.Gamma * floats.Norm(parameters, 2)
 	for i, p := range parameters {
-		derivative[i] += o.Gamma * p
+		add := o.Gamma
+		if p < 0 {
+			add = -o.Gamma
+		}
+		derivative[i] += add
 	}
 	return loss
 }
