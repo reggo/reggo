@@ -5,12 +5,14 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"sort"
 	"sync"
 
 	"github.com/reggo/reggo/common"
 
 	"github.com/gonum/floats"
 	"github.com/gonum/matrix/mat64"
+	"github.com/gonum/stat"
 )
 
 // TODO: Should have a Scaler and a SettableScaler where SetScale returns a Scaler.
@@ -27,6 +29,7 @@ func init() {
 	common.Register(&None{})
 	common.Register(&Linear{})
 	common.Register(&Normal{})
+	common.Register(&InnerNormal{})
 	//common.Register(&Probability{})
 }
 
@@ -322,6 +325,81 @@ func (l *Linear) Unscale(point []float64) error {
 	for i, val := range point {
 		point[i] = val*(l.Max[i]-l.Min[i]) + l.Min[i]
 	}
+	return nil
+}
+
+// InnerNormal sets the mean and standard deviation from the quartiles of the data
+type InnerNormal struct {
+	LowerQuantile float64
+	UpperQuantile float64
+
+	Mu     []float64
+	Sigma  []float64
+	Dim    int
+	Scaled bool
+}
+
+func (n *InnerNormal) IsScaled() bool {
+	return n.Scaled
+}
+
+// Dimensions returns the length of the data point
+func (n *InnerNormal) Dimensions() int {
+	return n.Dim
+}
+
+// Scale scales the data point
+func (n *InnerNormal) Scale(point []float64) error {
+	if len(point) != n.Dim {
+		return UnequalLength{}
+	}
+	for i := range point {
+		point[i] = (point[i] - n.Mu[i]) / n.Sigma[i]
+	}
+	return nil
+}
+
+// Unscale unscales the data point
+func (n *InnerNormal) Unscale(point []float64) error {
+	if len(point) != n.Dim {
+		return UnequalLength{}
+	}
+	for i := range point {
+		point[i] = point[i]*n.Sigma[i] + n.Mu[i]
+	}
+	return nil
+}
+
+func (n *InnerNormal) SetScale(data *mat64.Dense) error {
+	rows, dim := data.Dims()
+	if rows < 2 {
+		return errors.New("scale: less than two inputs")
+	}
+	means := make([]float64, dim)
+	stds := make([]float64, dim)
+	for i := 0; i < dim; i++ {
+		// Filter out the extremes
+		r := data.Col(nil, i)
+		if len(r) != rows {
+			panic("bad lengths")
+		}
+		sort.Float64s(r)
+
+		lowerIdx := int(math.Floor(float64(rows) * n.LowerQuantile))
+		upperIdx := int(math.Ceil(float64(rows) * n.UpperQuantile))
+
+		trimmed := r[lowerIdx:upperIdx]
+
+		mean := stat.Mean(trimmed, nil)
+		std := stat.StdDev(trimmed, mean, nil)
+		means[i] = mean
+		stds[i] = std
+	}
+	n.Mu = means
+	n.Sigma = stds
+	fmt.Println(n.Mu, n.Sigma)
+	n.Dim = dim
+	n.Scaled = true
 	return nil
 }
 

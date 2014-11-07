@@ -141,11 +141,17 @@ func LinearSolve(linearTrainable LinearTrainable, features *mat64.Dense, inputs,
 	}
 
 	if weights == nil {
-		parameterMat := mat64.Solve(features, trueOutputs)
+		parameterMat, err := mat64.Solve(features, trueOutputs)
+		if err != nil {
+			panic(err)
+		}
 		return parameterMat.RawMatrix().Data
 
 	}
-	parameterMat := mat64.Solve(weightedFeatures, weightedOutput)
+	parameterMat, err := mat64.Solve(weightedFeatures, weightedOutput)
+	if err != nil {
+		panic(err)
+	}
 
 	return parameterMat.RawMatrix().Data
 }
