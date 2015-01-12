@@ -390,8 +390,8 @@ func (n *InnerNormal) SetScale(data *mat64.Dense) error {
 
 		trimmed := r[lowerIdx:upperIdx]
 
-		mean := stat.Mean(trimmed, nil)
-		std := stat.StdDev(trimmed, mean, nil)
+		mean, std := stat.MeanStdDev(trimmed, nil)
+		//std := stat.StdDev(trimmed, mean, nil)
 		means[i] = mean
 		stds[i] = std
 	}
