@@ -6,6 +6,7 @@ import (
 	"math"
 	"math/rand"
 
+	"github.com/gonum/floats"
 	"github.com/reggo/reggo/common"
 
 	"fmt"
@@ -54,9 +55,12 @@ func (s SumNeuron) NumParameters(nInputs int) int {
 // Combine takes a weighted sum of the inputs with the weights set by parameters
 // The last element of parameters is the bias term, so len(parameters) = len(inputs) + 1
 func (s SumNeuron) Combine(parameters []float64, inputs []float64) (combination float64) {
-	for i, val := range inputs {
-		combination += parameters[i] * val
-	}
+	/*
+		for i, val := range inputs {
+			combination += parameters[i] * val
+		}
+	*/
+	combination = floats.Dot(inputs, parameters[:len(inputs)])
 	combination += parameters[len(parameters)-1]
 	return
 }
@@ -73,19 +77,20 @@ func (s SumNeuron) Randomize(parameters []float64) {
 func (s SumNeuron) DCombineDParameters(params []float64, inputs []float64, combination float64, deriv []float64) {
 	// The derivative of the function with respect to the parameters (in this case, the weights), is just
 	// the value of the input, and 1 for the bias term
-	for i, val := range inputs {
-		deriv[i] = val
-	}
+	/*
+		for i, val := range inputs {
+			deriv[i] = val
+		}
+	*/
+	copy(deriv, inputs)
 	deriv[len(deriv)-1] = 1
 }
 
 // DCombineDInput Finds the derivative of the combination with respect to the ith input
-// The derivative of the combination with respect to the input is the value of the weight
 func (s SumNeuron) DCombineDInput(params []float64, inputs []float64, combination float64, deriv []float64) {
-	for i := range inputs {
-		deriv[i] = params[i]
-	}
-	// This intentionally doesn't loop over all of the parameters, as the last parameter is the bias term
+	// The derivative of the combination with respect to the input is the value of the weight
+	// The last parameter is the bias term
+	copy(deriv, params[:len(inputs)])
 }
 
 /*

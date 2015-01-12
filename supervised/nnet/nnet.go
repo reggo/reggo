@@ -504,8 +504,9 @@ func (s *Trainer) NewLossDeriver() train.LossDeriver {
 		combinations: newPerNeuronMemory(s.neurons),
 		nParameters:  s.NumParameters(),
 		dLossDOutput: newPerNeuronMemory(s.neurons),
-		dLossDInput:  newPerParameterMemory(s.parameters),
-		dLossDParam:  newPerParameterMemory(s.parameters),
+		//dLossDInput:  newPerParameterMemory(s.parameters),
+		dLossDInput: s.newPerInputMemory(),
+		dLossDParam: newPerParameterMemory(s.parameters),
 	}
 }
 
@@ -520,6 +521,27 @@ func copyParameters(p [][][]float64) [][][]float64 {
 	}
 	return n
 }
+
+func (s *Trainer) newPerInputMemory() [][][]float64 {
+	n := make([][][]float64, len(s.parameters))
+	for i, layer := range s.parameters {
+		n[i] = make([][]float64, len(layer))
+		for j := range layer {
+			if i == 0 {
+				n[i][j] = make([]float64, s.InputDim())
+			} else {
+				n[i][j] = make([]float64, len(s.parameters[i-1]))
+			}
+		}
+	}
+	return n
+}
+
+/*
+func newPerInputMemory(params s.par) [][][]float64 {
+
+}
+*/
 
 func newPerParameterMemory(params [][][]float64) [][][]float64 {
 	n := make([][][]float64, len(params))
