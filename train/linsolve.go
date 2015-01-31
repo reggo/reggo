@@ -20,13 +20,13 @@ func FeaturizeTrainable(t Trainable, inputs common.RowMatrix, featurizedInputs *
 		featurizedInputs = mat64.NewDense(nSamples, nFeatures, nil)
 	}
 
-	rowViewer, isRowViewer := inputs.(mat64.RowViewer)
+	rowViewer, isRowViewer := inputs.(mat64.RawRowViewer)
 	var f func(start, end int)
 	if isRowViewer {
 		f = func(start, end int) {
 			featurizer := t.NewFeaturizer()
 			for i := start; i < end; i++ {
-				featurizer.Featurize(rowViewer.RowView(i), featurizedInputs.RowView(i))
+				featurizer.Featurize(rowViewer.RawRowView(i), featurizedInputs.RawRowView(i))
 			}
 		}
 	} else {
@@ -35,7 +35,7 @@ func FeaturizeTrainable(t Trainable, inputs common.RowMatrix, featurizedInputs *
 			input := make([]float64, nDim)
 			for i := start; i < end; i++ {
 				inputs.Row(input, i)
-				featurizer.Featurize(input, featurizedInputs.RowView(i))
+				featurizer.Featurize(input, featurizedInputs.RawRowView(i))
 			}
 		}
 	}

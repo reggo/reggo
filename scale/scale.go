@@ -96,7 +96,7 @@ func ScaleData(scaler Scaler, data *mat64.Dense) error {
 	var e ErrorList
 	f := func(start, end int) {
 		for r := start; r < end; r++ {
-			errTmp := scaler.Scale(data.RowView(r))
+			errTmp := scaler.Scale(data.RawRowView(r))
 			if errTmp != nil {
 				m.Lock()
 				e = append(e, &SliceError{Header: "scale", Idx: r, Err: errTmp})
@@ -122,7 +122,7 @@ func UnscaleData(scaler Scaler, data *mat64.Dense) error {
 	var e ErrorList
 	f := func(start, end int) {
 		for r := start; r < end; r++ {
-			errTmp := scaler.Unscale(data.RowView(r))
+			errTmp := scaler.Unscale(data.RawRowView(r))
 			if errTmp != nil {
 				m.Lock()
 				e = append(e, &SliceError{Header: "scale", Idx: r, Err: errTmp})

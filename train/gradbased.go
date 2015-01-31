@@ -101,13 +101,13 @@ func NewBatchGradBased(trainable Trainable, cacheFeatures bool, inputs, outputs 
 			output := make([]float64, g.outputDim)
 			for i := start; i < end; i++ {
 				// Compute the prediction
-				lossDeriver.Predict(parameters, g.features.RowView(i), prediction)
+				lossDeriver.Predict(parameters, g.features.RawRowView(i), prediction)
 				// Compute the loss
 
 				g.outputs.Row(output, i)
 				loss += g.losser.LossDeriv(prediction, output, dLossDPred)
 				// Compute the derivative
-				lossDeriver.Deriv(parameters, g.features.RowView(i), prediction, dLossDPred, dLossDWeight)
+				lossDeriver.Deriv(parameters, g.features.RawRowView(i), prediction, dLossDPred, dLossDWeight)
 
 				floats.Add(totalDLossDWeight, dLossDWeight)
 			}

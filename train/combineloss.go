@@ -115,7 +115,7 @@ func (g *GradOptimizable) Init() error {
 						w.deriv[i] = 0
 					}
 					for _, idx := range w.idxs {
-						lossDeriver.Predict(w.parameters, g.features.RowView(idx), predOutput)
+						lossDeriver.Predict(w.parameters, g.features.RawRowView(idx), predOutput)
 						g.Outputs.Row(outputs, idx)
 						loss := g.Losser.LossDeriv(predOutput, outputs, dLossDPred)
 						if g.Weights == nil {
@@ -123,7 +123,7 @@ func (g *GradOptimizable) Init() error {
 						} else {
 							w.loss += g.Weights[idx] * loss
 						}
-						lossDeriver.Deriv(w.parameters, g.features.RowView(idx), predOutput, dLossDPred, dLossDParam)
+						lossDeriver.Deriv(w.parameters, g.features.RawRowView(idx), predOutput, dLossDPred, dLossDParam)
 						if g.Weights != nil {
 							floats.Scale(g.Weights[idx], dLossDParam)
 						}
