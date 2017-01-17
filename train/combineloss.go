@@ -159,13 +159,13 @@ func (g *GradOptimizable) Close() {
 	close(g.quit)
 }
 
-func (g *GradOptimizable) F(params []float64) float64 {
+func (g *GradOptimizable) Func(params []float64) float64 {
 	deriv := make([]float64, len(params))
-	return g.FDf(params, deriv)
+	return g.FuncGrad(params, deriv)
 }
 
 // Not callable in parallel because of the batches
-func (g *GradOptimizable) FDf(params []float64, deriv []float64) float64 {
+func (g *GradOptimizable) FuncGrad(params []float64, deriv []float64) float64 {
 	inds := g.Sampler.Iterate()
 	total := len(inds)
 

@@ -48,8 +48,8 @@ func BatchPredict(batch BatchPredictor, inputs common.RowMatrix, outputs common.
 	// memory allocations are saved and no race condition happens.
 
 	// If the input and/or output is a RowViewer, save time by avoiding a copy
-	inputRVer, inputIsRowViewer := inputs.(mat64.RowViewer)
-	outputRVer, outputIsRowViewer := outputs.(mat64.RowViewer)
+	inputRVer, inputIsRowViewer := inputs.(mat64.RawRowViewer)
+	outputRVer, outputIsRowViewer := outputs.(mat64.RawRowViewer)
 
 	var f func(start, end int)
 
@@ -61,7 +61,7 @@ func BatchPredict(batch BatchPredictor, inputs common.RowMatrix, outputs common.
 		f = func(start, end int) {
 			p := batch.NewPredictor()
 			for i := start; i < end; i++ {
-				p.Predict(inputRVer.RowView(i), outputRVer.RowView(i))
+				p.Predict(inputRVer.RawRowView(i), outputRVer.RawRowView(i))
 			}
 		}
 
@@ -71,7 +71,7 @@ func BatchPredict(batch BatchPredictor, inputs common.RowMatrix, outputs common.
 			output := make([]float64, outputDim)
 			for i := start; i < end; i++ {
 				outputs.Row(output, i)
-				p.Predict(inputRVer.RowView(i), output)
+				p.Predict(inputRVer.RawRowView(i), output)
 				outputs.SetRow(i, output)
 			}
 		}
@@ -81,7 +81,7 @@ func BatchPredict(batch BatchPredictor, inputs common.RowMatrix, outputs common.
 			input := make([]float64, inputDim)
 			for i := start; i < end; i++ {
 				inputs.Row(input, i)
-				p.Predict(input, outputRVer.RowView(i))
+				p.Predict(input, outputRVer.RawRowView(i))
 			}
 		}
 	case !inputIsRowViewer && !outputIsRowViewer:
